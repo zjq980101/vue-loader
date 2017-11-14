@@ -24,6 +24,11 @@
         <tab-view class="tab_list" :title_="tab_title" :list_="tab_left_list"></tab-view>
         <tab-view class="tab_list" :title_="tab_title" :list_="tab_right_list"></tab-view>
         <div class="clearfix"></div>
+        <div class="table">
+            <table-wrap :title="table_title">
+                <table-row v-for="(x,i) in row_list" :row="x" :key="i"></table-row>
+            </table-wrap>
+        </div>
     </div>
     </div>
 </template>
@@ -31,6 +36,8 @@
 import school_range from '../components/school_range.vue';
 import school_area from '../components/school_area.vue';
 import tab_view from "../components/table_view.vue";
+import table_row from '../components/table_row.vue';
+import table_wrap from '../components/table_wrap.vue';
 import { mapMutations, mapState } from 'vuex';  //加花括号的原因是因为解析出来的
 export default {
     data: function() {
@@ -38,6 +45,8 @@ export default {
             tab_title: [],
             tab_left_list: [],
             tab_right_list: [],
+            table_title: [],
+            row_list: []
         }
     },
     // computed: {
@@ -70,6 +79,11 @@ export default {
                 return index == 0 ? { value: value, selected: true } : { value: value, selected: false }
             })
             vm.$store.commit('update_school_area', area_data)
+        })
+
+        this.$http.get('src/server/overall.json').then(res => {
+            this.table_title = res.data.result.title
+            this.row_list = res.data.result.rows;
         })
 
         //var vm=this;          
@@ -114,7 +128,9 @@ export default {
     components: {
         "school-range": school_range,
         "school-area": school_area,
-        'tab-view': tab_view
+        'tab-view': tab_view,
+        "table-wrap": table_wrap,
+        "table-row": table_row
     },
     mounted: function() {
         console.log(this)
@@ -195,6 +211,7 @@ export default {
 }
 
 
+
 /* .wrap {
     padding: 5px;
     font-size: 15px;
@@ -222,15 +239,18 @@ export default {
 
 .next {
     color: #f00;
-    line-height:30px;
+    line-height: 30px;
 }
-.title-second{
-    height:40px;
-    line-height:40px;
-    color:#000;
-    border-bottom:1px solid #ccc;
-    text-indent:10px;
+
+.title-second {
+    height: 40px;
+    line-height: 40px;
+    color: #000;
+    border-bottom: 1px solid #ccc;
+    text-indent: 10px;
 }
+
+
 /* .tab_container table {
     float: left;
 }
@@ -238,6 +258,14 @@ export default {
 .clearfix {
     clear: both;
 } */
+
+.table table {
+    width: 100%;
+    text-align: center;
+}
+ .table td{
+    line-height:35px;
+} 
 </style>
 
 
